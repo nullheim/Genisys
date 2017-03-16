@@ -281,6 +281,12 @@ class Level implements ChunkManager, Metadatable{
 
 	private $dimension = self::DIMENSION_NORMAL;
 
+	private $allowTouch = [
+	    146 => 146,
+	    130 => 130,
+	    116 => 116
+	];
+
 	/**
 	 * This method is internal use only. Do not use this in plugins
 	 *
@@ -1771,7 +1777,9 @@ class Level implements ChunkManager, Metadatable{
 				$t = new Vector2($target->x, $target->z);
 				$s = new Vector2($this->getSpawnLocation()->x, $this->getSpawnLocation()->z);
 				if(count($this->server->getOps()->getAll()) > 0 and $t->distance($s) <= $distance){ //set it to cancelled so plugins can bypass this
-					$ev->setCancelled();
+					if(!isset($this->allowTouch[$target->getId()])){
+						$ev->setCancelled();
+					}
 				}
 			}
 			if($player->isSpectator()){
