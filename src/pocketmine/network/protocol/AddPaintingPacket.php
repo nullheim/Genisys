@@ -40,9 +40,9 @@ class AddPaintingPacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putEntityId($this->eid); //EntityUniqueID
-		$this->putEntityId($this->eid); //EntityRuntimeID
-		$this->putBlockCoords($this->x, $this->y, $this->z);
+		$this->putEntityUniqueId($this->eid); //EntityUniqueID
+		$this->putEntityRuntimeId($this->eid); //EntityRuntimeID
+		$this->putBlockPosition($this->x, $this->y, $this->z);
 		$this->putVarInt($this->direction);
 		$this->putString($this->title);
 	}

@@ -299,6 +299,7 @@ class Server{
 	public $enchantingTableEnabled = true;
 	public $countBookshelf = false;
 	public $allowInventoryCheats = false;
+	private $doTitleTick = true;
 
 	/**
 	 * @return string
@@ -1693,6 +1694,7 @@ class Server{
 			$this->autoTickRateLimit = (int) $this->getProperty("level-settings.auto-tick-rate-limit", 20);
 			$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
 			$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
+			$this->doTitleTick = (bool) $this->getProperty("console.title-tick", true);
 
 			$this->scheduler = new ServerScheduler();
 
@@ -2553,10 +2555,6 @@ class Server{
 	}
 
 	private function titleTick(){
-		if(!Terminal::hasFormattingCodes()){
-			return;
-		}
-
 		$d = Utils::getRealMemoryUsage();
 
 		$u = Utils::getMemoryUsage(true);
@@ -2672,7 +2670,9 @@ class Server{
 		}
 
 		if(($this->tickCounter & 0b1111) === 0){
-			$this->titleTick();
+			if($this->doTitleTick and Terminal::hasFormattingCodes()){
+				$this->titleTick();
+			}
 			$this->maxTick = 20;
 			$this->maxUse = 0;
 

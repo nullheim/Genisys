@@ -138,6 +138,7 @@ use pocketmine\network\protocol\SetEntityMotionPacket;
 use pocketmine\network\protocol\SetPlayerGameTypePacket;
 use pocketmine\network\protocol\SetSpawnPositionPacket;
 use pocketmine\network\protocol\SetTimePacket;
+use pocketmine\network\protocol\SetTitlePacket;
 use pocketmine\network\protocol\StartGamePacket;
 use pocketmine\network\protocol\TakeItemEntityPacket;
 use pocketmine\network\protocol\TextPacket;
@@ -1632,12 +1633,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		if(parent::setMotion($mot)){
 			if($this->chunk !== null){
 				$this->level->addEntityMotion($this->chunk->getX(), $this->chunk->getZ(), $this->getId(), $this->motionX, $this->motionY, $this->motionZ);
-				$pk = new SetEntityMotionPacket();
-				$pk->eid = $this->id;
-				$pk->motionX = $mot->x;
-				$pk->motionY = $mot->y;
-				$pk->motionZ = $mot->z;
-				$this->dataPacket($pk);
 			}
 
 			if($this->motionY > 0){
@@ -1805,16 +1800,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->checkTeleportPosition();
 
 		$this->timings->stopTiming();
-
-		//TODO: remove this workaround (broken client MCPE 1.0.0)
-		if(count($this->messageQueue) > 0){
-			$pk = new TextPacket();
-			$pk->type = TextPacket::TYPE_RAW;
-			$pk->message = implode("\n", $this->messageQueue);
-			$this->dataPacket($pk);
-			$this->messageQueue = [];
-		}
-
 		return true;
 	}
 
@@ -2191,10 +2176,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
-				if($newPos->distanceSquared($this) == 0 and ($packet->yaw % 360) === $this->yaw and ($packet->pitch % 360) === $this->pitch){ //player hasn't moved, just client spamming packets
-					break;
-				}
-
 				$revert = false;
 				if(!$this->isAlive() or $this->spawned !== true){
 					$revert = true;
@@ -2245,6 +2226,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->inventory->setHeldItemIndex($packet->selectedSlot, false, $packet->slot);
 
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+				break;
+			case ProtocolInfo::BLOCK_PICK_REQUEST_PACKET:
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
@@ -2878,6 +2861,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->server->dispatchCommand($ev->getPlayer(), substr($ev->getMessage(), 1));
 				Timings::$playerCommandTimer->stopTiming();
 				break;
+			case ProtocolInfo::COMMAND_BLOCK_UPDATE_PACKET:
+				break;
 			case ProtocolInfo::TEXT_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
 					break;
@@ -3306,7 +3291,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$tile->setItem(null);
 					$tile->setItemRotation(0);
 				}
-
+			case ProtocolInfo::PLAY_SOUND_PACKET:
+				break;
+			case ProtocolInfo::SET_TITLE_PACKET:
+				break;
+			case ProtocolInfo::STOP_SOUND_PACKET:
+				break;
+			case ProtocolInfo::LEVEL_SOUND_EVENT_PACKET:
+			    $this->getLevel()->addChunkPacket($this->chunk->getX(), $this->chunk->getZ(), $packet);
 				break;
 			default:
 				break;
@@ -3342,9 +3334,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		return false;
 	}
-
-	/** @var string[] */
-	private $messageQueue = [];
 
 	/**
 	 * @param Item $item
@@ -3396,14 +3385,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$message = $message->getText();
 		}
 
-		//TODO: Remove this workaround (broken client MCPE 1.0.0)
-		$this->messageQueue[] = $this->server->getLanguage()->translateString($message);
-		/*
 		$pk = new TextPacket();
 		$pk->type = TextPacket::TYPE_RAW;
 		$pk->message = $this->server->getLanguage()->translateString($message);
 		$this->dataPacket($pk);
-		*/
 	}
 
 	public function sendTranslation($message, array $parameters = []){

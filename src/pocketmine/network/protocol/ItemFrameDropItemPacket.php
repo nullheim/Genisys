@@ -32,7 +32,7 @@ class ItemFrameDropItemPacket extends DataPacket{
 	public $z;
 
 	public function decode(){
-		$this->getBlockCoords($this->x, $this->y, $this->z);
+		$this->getBlockPosition($this->x, $this->y, $this->z);
 	}
 
 	public function encode(){

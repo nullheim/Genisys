@@ -263,36 +263,52 @@ class BinaryStream extends \stdClass{
 		$this->put(Binary::writeVarInt($v));
 	}
 
-	public function getEntityId(){
-		return $this->getVarInt();
+	// public function getEntityId(){
+	// 	return $this->getVarInt();
+	// }
+
+	// public function putEntityId($v){
+	// 	$this->putVarInt($v);
+	// }
+
+	// public function getBlockCoords(&$x, &$y, &$z){
+	// 	$x = $this->getVarInt();
+	// 	$y = $this->getUnsignedVarInt();
+	// 	$z = $this->getVarInt();
+	// }
+
+	public function getUnsignedVarLong(){
+		return Binary::readUnsignedVarLong($this);
 	}
 
-	public function putEntityId($v){
-		$this->putVarInt($v);
+	// public function putBlockCoords($x, $y, $z){
+	// 	$this->putVarInt($x);
+	// 	$this->putUnsignedVarInt($y);
+	// 	$this->putVarInt($z);
+	// }
+
+	public function putUnsignedVarLong($v){
+		$this->buffer .= Binary::writeUnsignedVarLong($v);
 	}
 
-	public function getBlockCoords(&$x, &$y, &$z){
-		$x = $this->getVarInt();
-		$y = $this->getUnsignedVarInt();
-		$z = $this->getVarInt();
+	// public function getVector3f(&$x, &$y, &$z){
+	// 	$x = $this->getLFloat(4);
+	// 	$y = $this->getLFloat(4);
+	// 	$z = $this->getLFloat(4);
+	// }
+
+	public function getVarLong(){
+		return Binary::readVarLong($this);
 	}
 
-	public function putBlockCoords($x, $y, $z){
-		$this->putVarInt($x);
-		$this->putUnsignedVarInt($y);
-		$this->putVarInt($z);
-	}
+	// public function putVector3f($x, $y, $z){
+	// 	$this->putLFloat($x);
+	// 	$this->putLFloat($y);
+	// 	$this->putLFloat($z);
+	// }
 
-	public function getVector3f(&$x, &$y, &$z){
-		$x = $this->getLFloat(4);
-		$y = $this->getLFloat(4);
-		$z = $this->getLFloat(4);
-	}
-
-	public function putVector3f($x, $y, $z){
-		$this->putLFloat($x);
-		$this->putLFloat($y);
-		$this->putLFloat($z);
+	public function putVarLong($v){
+		$this->buffer .= Binary::writeVarLong($v);
 	}
 
 	public function feof(){
