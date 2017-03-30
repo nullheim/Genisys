@@ -3792,14 +3792,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$ev->setKeepExperience($this->server->keepExperience);
 		$this->server->getPluginManager()->callEvent($ev);
 
-		if(!$ev->getKeepInventory()){
-			foreach($ev->getDrops() as $item){
-				$this->level->dropItem($this, $item);
-			}
-
-			if($this->inventory !== null){
-				$this->inventory->clearAll();
-			}
+		if($this->inventory !== null){
+			$this->inventory->clearAll();
 		}
 
 		if($this->server->expEnabled and !$ev->getKeepExperience()){
