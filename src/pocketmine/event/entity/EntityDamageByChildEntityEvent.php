@@ -25,8 +25,8 @@ use pocketmine\entity\Entity;
 
 class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent{
 
-	/** @var Entity */
-	private $childEntity;
+	/** @var int */
+	private $childEntityEid;
 
 
 	/**
@@ -37,7 +37,7 @@ class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent{
 	 * @param int|int[] $damage
 	 */
 	public function __construct(Entity $damager, Entity $childEntity, Entity $entity, $cause, $damage){
-		$this->childEntity = $childEntity;
+		$this->childEntityEid = $childEntity->getId();
 		parent::__construct($damager, $entity, $cause, $damage);
 	}
 
@@ -45,7 +45,7 @@ class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent{
 	 * @return Entity
 	 */
 	public function getChild(){
-		return $this->childEntity;
+		return $this->getEntity()->getLevel()->getServer()->findEntity($this->childEntityEid, $this->getEntity()->getLevel());
 	}
 
 

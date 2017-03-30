@@ -26,8 +26,8 @@ use pocketmine\entity\Entity;
 
 class EntityDamageByEntityEvent extends EntityDamageEvent{
 
-	/** @var Entity */
-	private $damager;
+	/** @var int */
+	private $damagerEid;
 	/** @var float */
 	private $knockBack;
 
@@ -39,7 +39,7 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	 * @param float     $knockBack
 	 */
 	public function __construct(Entity $damager, Entity $entity, $cause, $damage, $knockBack = 0.4){
-		$this->damager = $damager;
+		$this->damagerEid = $damager->getId();
 		$this->knockBack = $knockBack;
 		parent::__construct($entity, $cause, $damage);
 		$this->addAttackerModifiers($damager);
@@ -63,7 +63,7 @@ class EntityDamageByEntityEvent extends EntityDamageEvent{
 	 * @return Entity
 	 */
 	public function getDamager(){
-		return $this->damager;
+		return $this->getEntity()->getLevel()->getServer()->findEntity($this->damagerEid, $this->getEntity()->getLevel());
 	}
 	/**
 	 * @return float
