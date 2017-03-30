@@ -805,13 +805,11 @@ abstract class Entity extends Location implements Metadatable{
 	/**
 	 * @param Player $player
 	 */
-	public function despawnFrom(Player $player, bool $send = true){
+	public function despawnFrom(Player $player){
 		if(isset($this->hasSpawned[$player->getLoaderId()])){
-			if($send){
-				$pk = new RemoveEntityPacket();
-				$pk->eid = $this->id;
-				$player->dataPacket($pk);
-			}
+			$pk = new RemoveEntityPacket();
+			$pk->eid = $this->id;
+			$player->dataPacket($pk);
 			unset($this->hasSpawned[$player->getLoaderId()]);
 		}
 	}
