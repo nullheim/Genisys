@@ -79,7 +79,6 @@ class Item implements ItemIds, \JsonSerializable{
 	private $tags = "";
 	private $cachedNBT = null;
 	public $count;
-	protected $durability = 0;
 	protected $name;
 
 	public function canBeActivated() :bool{
@@ -1045,4 +1044,11 @@ class Item implements ItemIds, \JsonSerializable{
 		return $item;
 	}
 
+	public function __clone(){
+		if($this->block !== null){
+			$this->block = clone $this->block;
+		}
+
+		$this->cachedNBT = null;
+	}
 }
