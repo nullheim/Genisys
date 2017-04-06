@@ -1635,7 +1635,7 @@ class Server{
 			}
 
 			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
-			if(file_exists($this->filePath . "src/pocketmine/resources/genisys_$lang.yml")){
+			if(file_exists($this->filePath . "src/pocketmine/resources/everyct_$lang.yml")){
 				$content = file_get_contents($file = $this->filePath . "src/pocketmine/resources/everyct_$lang.yml");
 			}else{
 				$content = file_get_contents($file = $this->filePath . "src/pocketmine/resources/everyct_eng.yml");
