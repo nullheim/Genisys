@@ -775,7 +775,7 @@ class Server{
 	}
 
 	/**
-	 * @param string $name
+	 * @param string $nam
 	 *
 	 * @return CompoundTag
 	 */
@@ -1471,11 +1471,11 @@ class Server{
 	public function about(){
 		$string = '
 
-	§3Genisys§f is a custom version of §bPocketMine-MP§f, modified by §5iTX Technologies LLC§f
+	§bEveryct§f is a custom version of §4PocketMine-MP§f, modified by §6nullheim§f
 	Version: §6' . $this->getPocketMineVersion() . '§f
 	Target client version: §b' . ProtocolInfo::MINECRAFT_VERSION . '§f
-	Source code: §dhttps://github.com/iTXTech/Genisys§f
-	';
+	Source code: §dhttps://github.com/nullheim/everyct§f
+';
 	
 		$this->getLogger()->info($string);
 	}
